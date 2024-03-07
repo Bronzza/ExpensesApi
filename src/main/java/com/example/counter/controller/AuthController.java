@@ -50,7 +50,7 @@ public class AuthController {
     @CrossOrigin
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity register(@RequestBody RegistrationDto dto) {
-        RegistrationResponseDto registrationResponseDto = userService.registerUser(dto);
+        RegistrationResponseDto registrationResponseDto = userService.registerUserFromDto(dto);
         System.out.println("Saving user's credentials, email: " + dto.getEmail() + "password: " + dto.getPassword());
 
         return ResponseEntity.ok(registrationResponseDto);

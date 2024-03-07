@@ -42,4 +42,8 @@ public class Expanse {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate date;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
