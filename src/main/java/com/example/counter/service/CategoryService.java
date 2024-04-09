@@ -1,20 +1,25 @@
 package com.example.counter.service;
 
 import com.example.counter.dto.CategoryDto;
+import com.example.counter.dto.CategorySubCategoryDto;
 import com.example.counter.entiry.Category;
 import com.example.counter.mapper.CategoryMapper;
 import com.example.counter.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
 
+    @Lazy
     private final CategoryMapper categoryMapper;
     private final CategoryRepository repository;
 
@@ -37,4 +42,10 @@ public class CategoryService {
     }
 
 
+    public List<CategorySubCategoryDto> findAll() {
+        return repository.findAll()
+                .stream()
+                .map(categoryMapper::categoryToNestedDto)
+                .collect(Collectors.toList());
+    }
 }

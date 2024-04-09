@@ -1,6 +1,7 @@
 package com.example.counter.mapper;
 
 import com.example.counter.dto.ExpanseDto;
+import com.example.counter.dto.ExpanseResponseDto;
 import com.example.counter.dto.SubCategoryDto;
 import com.example.counter.entiry.Expanse;
 import com.example.counter.entiry.SubCategory;
@@ -30,4 +31,10 @@ public abstract class ExpanseMapper {
                     ".findById(expanseDto.getSubCategoryId()))")
     })
     public abstract Expanse dtoToExpanse(ExpanseDto expanseDto);
+
+    @Mappings({
+            @Mapping(target = "categoryName", expression = "java(expanse.getCategory().getName())"),
+            @Mapping(target = "subCategoryName", expression = "java(expanse.getSubCategory().getName())"),
+    })
+    public abstract ExpanseResponseDto expanseToResponseDto(Expanse expanse);
 }

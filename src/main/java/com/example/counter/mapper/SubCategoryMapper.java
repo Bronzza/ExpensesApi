@@ -5,11 +5,13 @@ import com.example.counter.entiry.SubCategory;
 import com.example.counter.service.CategoryService;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public abstract class SubCategoryMapper {
 
     @Autowired
+    @Lazy
     protected CategoryService categoryService;
 
     @Mappings({

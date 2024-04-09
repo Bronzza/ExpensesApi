@@ -1,18 +1,20 @@
 package com.example.counter.service;
 
 import com.example.counter.dto.ExpanseDto;
+import com.example.counter.dto.ExpanseResponseDto;
 import com.example.counter.entiry.Expanse;
 import com.example.counter.entiry.User;
 import com.example.counter.mapper.ExpanseMapper;
 import com.example.counter.repository.ExpanseRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,6 +64,25 @@ public class ExpansesService {
                 .collect(Collectors.toList());
     }
 
+    public List<ExpanseResponseDto> findByParametersResponse(String username,
+                                                             Long categoryId,
+                                                             Long subCategoryId,
+                                                             LocalDate startDate,
+                                                             LocalDate endDate,
+                                                             BigDecimal moreThan,
+                                                             BigDecimal lessThan
+    ) {
+        List<Expanse> searchResult = expanseRepository.findByUserEmailAndDateBetween(username, startDate,
+                endDate.plusDays(1));
+
+        return searchResult.isEmpty()
+                ? Collections.emptyList()
+                : prepareStream(searchResult, categoryId, subCategoryId, moreThan, lessThan)
+                .map(expanseMapper::expanseToResponseDto)
+                .collect(Collectors.toList());
+    }
+
+
     private static Stream<Expanse> prepareStream(List<Expanse> listToFilter, Long categoryId, Long subCategoryId, BigDecimal moreThan,
                                                  BigDecimal lessThan) {
         Stream<Expanse> stream = listToFilter.stream();
@@ -102,5 +123,23 @@ public class ExpansesService {
             expanse.setDescription(expanseDto.getDescription());
         }
         return expanse;
+    }
+
+    public List<ExpanseResponseDto> findLastTenByUserEmail(String userEmail) {
+        return expanseRepository.findFirst10ByUserEmailOrderByDateDesc(userEmail)
+                .stream()
+                .map(expanseMapper::expanseToResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<ExpanseResponseDto> findLastNByUserEmail(String userEmail,Integer numRecords) {
+        Sort sort = Sort.by(
+                Sort.Order.desc("date"),
+                Sort.Order.desc("id"));
+
+        return expanseRepository.findByUserEmail(userEmail, PageRequest.of(0, numRecords, sort))
+                .stream()
+                .map(expanseMapper::expanseToResponseDto)
+                .toList();
     }
 }

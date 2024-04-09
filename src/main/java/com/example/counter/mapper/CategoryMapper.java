@@ -2,15 +2,25 @@ package com.example.counter.mapper;
 
 
 import com.example.counter.dto.CategoryDto;
+import com.example.counter.dto.CategorySubCategoryDto;
 import com.example.counter.entiry.Category;
-import org.mapstruct.InjectionStrategy;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
+import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
-public interface CategoryMapper {
+public abstract class CategoryMapper {
 
-    CategoryDto categoryToDto(Category category);
+    @Autowired
+    @Lazy
+    protected SubCategoryMapper subCategoryMapper;
 
-    Category dtoToCategory(CategoryDto categoryDto);
+    public abstract CategoryDto categoryToDto(Category category);
+
+    public abstract Category dtoToCategory(CategoryDto categoryDto);
+
+    @Mappings({
+            @Mapping(target = "subCategoryList", expression = "java(category.getSubCategories().stream().map(subCategoryMapper::subCategoryToDto).toList())")
+    })
+    public abstract CategorySubCategoryDto categoryToNestedDto(Category category);
 }

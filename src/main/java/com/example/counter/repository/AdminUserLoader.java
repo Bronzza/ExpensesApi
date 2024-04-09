@@ -1,7 +1,5 @@
 package com.example.counter.repository;
 
-import com.example.counter.entiry.User;
-import com.example.counter.entiry.enums.Role;
 import com.example.counter.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
