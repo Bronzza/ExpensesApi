@@ -6,6 +6,7 @@ import com.example.counter.dto.*;
 import com.example.counter.entiry.User;
 import com.example.counter.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/rest/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -51,8 +53,7 @@ public class AuthController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity register(@RequestBody RegistrationDto dto) {
         RegistrationResponseDto registrationResponseDto = userService.registerUserFromDto(dto);
-        System.out.println("Saving user's credentials, email: " + dto.getEmail() + "password: " + dto.getPassword());
-
+        log.info("Saving user's credentials, email: {}, password: {} ", dto.getEmail(), dto.getPassword());
         return ResponseEntity.ok(registrationResponseDto);
 
     }

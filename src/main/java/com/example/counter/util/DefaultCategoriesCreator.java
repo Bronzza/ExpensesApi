@@ -13,10 +13,8 @@ import java.util.function.Function;
 
 
 public class DefaultCategoriesCreator {
-
-    private CategoryService categoryService;
-    private final Map<String, List<String>> defaultCategoriesSubCategoriesNames = new HashMap<>();
-    private final Map<String, List<String>> adminStuff = new HashMap<>();
+    private final Map<String, List<String>> defaultCategoriesSubCategoriesNames = new LinkedHashMap<>();
+    private final Map<String, List<String>> adminStuff = new LinkedHashMap<>();
 
     public DefaultCategoriesCreator() {
         List<String> health = Arrays.asList("Medication", "Sport");
@@ -32,24 +30,24 @@ public class DefaultCategoriesCreator {
         List<String> charity = Arrays.asList("Donation");
         List<String> degradation = Arrays.asList("Alcohol", "Tobacco", "Girls", "Junk Food");
 
+        defaultCategoriesSubCategoriesNames.put("House", house);
+        defaultCategoriesSubCategoriesNames.put("Family", kids);
         defaultCategoriesSubCategoriesNames.put("Products", products);
+        defaultCategoriesSubCategoriesNames.put("Transport", transport);
         defaultCategoriesSubCategoriesNames.put("Travel", travel);
         defaultCategoriesSubCategoriesNames.put("Entertainment", entertainment);
-        defaultCategoriesSubCategoriesNames.put("House", house);
-        defaultCategoriesSubCategoriesNames.put("Transport", transport);
-        defaultCategoriesSubCategoriesNames.put("Family", kids);
-        defaultCategoriesSubCategoriesNames.put("Other", other);
         defaultCategoriesSubCategoriesNames.put("Charity", charity);
+        defaultCategoriesSubCategoriesNames.put("Other", other);
 
         adminStuff.put("Products", products);
-        adminStuff.put("Travel", travel);
-        adminStuff.put("Entertainment", entertainment);
         adminStuff.put("House", house);
         adminStuff.put("Transport", transport);
         adminStuff.put("Family", kids);
-        adminStuff.put("Other", other);
+        adminStuff.put("Travel", travel);
+        adminStuff.put("Entertainment", entertainment);
         adminStuff.put("Charity", charity);
         adminStuff.put("Degradation", degradation);
+        adminStuff.put("Other", other);
     }
 
 
@@ -59,6 +57,7 @@ public class DefaultCategoriesCreator {
                         .builder()
                         .name(entry.getKey())
                         .subCategories(nameToSubCategory(entry.getValue()))
+//                        .user()
                         .build()
                 )
                 .peek(category -> category

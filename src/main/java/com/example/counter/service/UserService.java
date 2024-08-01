@@ -7,8 +7,8 @@ import com.example.counter.entiry.User;
 import com.example.counter.entiry.enums.Role;
 import com.example.counter.mapper.RegistrationMapper;
 import com.example.counter.repository.UserRepository;
-import com.example.counter.util.DefaultCategoriesCreator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,25 +18,26 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final RegistrationMapper mapper;
+    @Lazy
     private final CategoryService categoryService;
-    private DefaultCategoriesCreator creator = new DefaultCategoriesCreator();
 
+
+    //re-do structure
+    //move creator to category service, and on registration, save user, than pass it to category service
+    //and attach user to each category
     public RegistrationResponseDto registerUserFromDto(RegistrationDto dto) {
         User userToSave = mapper.dtoToUser(dto);
-        userToSave.setCategories(saveDefaultCategoriesToDB(false));
-        return mapper.userToDto(userRepository.save(userToSave));
+//        userToSave.setCategories(saveDefaultCategoriesToDB(false));
+        User savedUser = userRepository.save(userToSave);
+//        categoryService.createCategoriesAndAttachToUser(savedUser, false);
+        categoryService.createCategoriesAndAttachToUser(savedUser,false);
+        return mapper.userToDto(savedUser);
     }
 
-    public void registerAdminUser() {
+    public User registerAdminUser() {
         User adminUser = createAdminUser();
-        adminUser.setCategories(saveDefaultCategoriesToDB(true));
-        userRepository.save(adminUser);
-    }
-
-    private List<Category> saveDefaultCategoriesToDB(Boolean isAdmin) {
-        List<Category> categoriesToSave = isAdmin ? creator.createAdminCategories() : creator.createDefaultCategories();
-        List<Category> categories = categoryService.createCategory(categoriesToSave);
-        return categories;
+//        return userRepository.save(adminUser);
+        return adminUser;
     }
 
     public User findUserByEmail(String email) {
@@ -51,5 +52,9 @@ public class UserService {
                 .firstName("Serhii")
                 .lastName("Repinetskyi")
                 .build();
+    }
+
+    public User updateUser(User toUpdate) {
+        return userRepository.saveAndFlush(toUpdate);
     }
 }

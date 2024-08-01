@@ -35,10 +35,6 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Expanse> expanses;
 
-    @JsonBackReference
-    @ManyToMany
-    @JoinTable(name = "user_categories",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id"))
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Category> categories;
 }

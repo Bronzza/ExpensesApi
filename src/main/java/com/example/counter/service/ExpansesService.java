@@ -1,22 +1,25 @@
 package com.example.counter.service;
 
+import com.example.counter.DateUtil;
+import com.example.counter.dto.CategorySubCategoryDto;
 import com.example.counter.dto.ExpanseDto;
 import com.example.counter.dto.ExpanseResponseDto;
+import com.example.counter.entiry.Category;
 import com.example.counter.entiry.Expanse;
+import com.example.counter.entiry.SubCategory;
 import com.example.counter.entiry.User;
 import com.example.counter.mapper.ExpanseMapper;
 import com.example.counter.repository.ExpanseRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -132,7 +135,7 @@ public class ExpansesService {
                 .collect(Collectors.toList());
     }
 
-    public List<ExpanseResponseDto> findLastNByUserEmail(String userEmail,Integer numRecords) {
+    public List<ExpanseResponseDto> findLastNByUserEmail(String userEmail, Integer numRecords) {
         Sort sort = Sort.by(
                 Sort.Order.desc("date"),
                 Sort.Order.desc("id"));
@@ -141,5 +144,50 @@ public class ExpansesService {
                 .stream()
                 .map(expanseMapper::expanseToResponseDto)
                 .toList();
+    }
+
+    public void createTestDataInDB(User forUser) {
+        Random random = new Random();
+        List<Category> categories = forUser.getCategories();
+        int categoryCount = categories.size();
+        List<LocalDate> listOfDates = DateUtil.createListOfDates(LocalDate.now().minusDays(9), LocalDate.now());
+
+        for (int i = 0; i < 15; i++) {
+            Category category = categories.get(random.nextInt(0, categoryCount));
+            int subCategoriesCount = category.getSubCategories().size();
+
+            expanseRepository.save(Expanse.builder()
+                    .category(category)
+                    .subCategory(category.getSubCategories().get(random.nextInt(0, subCategoriesCount)))
+                    .date(listOfDates.get(random.nextInt(0, listOfDates.size())))
+                    .amount(BigDecimal.valueOf(random.nextInt(10, 250)))
+                    .user(forUser)
+                    .build());
+        }
+
+
+//        Set<Map.Entry<Category, List<SubCategory>>> subcuts = subCategoryService.getCategorySubCategoryMap().entrySet()
+//                .stream().filter(entry -> (forUser.getCategories().contains(entry.getKey())))
+//                .collect(Collectors.toSet());
+//        ArrayList<Map.Entry<Category, List<SubCategory>>> entries = new ArrayList<>(subcuts);
+//
+//        List<LocalDate> listOfDates = DateUtil.createListOfDates(LocalDate.now().minusDays(9), LocalDate.now());
+//        int dateCount = (int)  listOfDates.stream().count();
+//
+//        int categoriesCount = (int) entries.stream().count();
+//
+//        for (int i = 0; i < 15; i++) {
+//            Map.Entry<Category, List<SubCategory>> randomEntry =
+//                    entries.get(random.nextInt(0, categoriesCount));
+//            long subCategoriesCount = randomEntry.getValue().stream().count();
+//
+//            expanseRepository.save( Expanse.builder()
+//                    .category(randomEntry.getKey())
+//                    .subCategory(randomEntry.getValue().get((int)random.nextLong(0, subCategoriesCount)))
+//                    .date(listOfDates.get(random.nextInt(0, dateCount)))
+//                    .amount(BigDecimal.valueOf(random.nextInt(10, 250)))
+//                    .user(forUser)
+//                    .build());
+//        }
     }
 }

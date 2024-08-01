@@ -24,4 +24,8 @@ public class Category {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Expanse> expanses;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

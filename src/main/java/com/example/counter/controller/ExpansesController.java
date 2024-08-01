@@ -1,6 +1,6 @@
 package com.example.counter.controller;
 
-import com.example.counter.Util;
+import com.example.counter.DateUtil;
 import com.example.counter.dto.ExpanseDto;
 import com.example.counter.dto.ExpanseResponseDto;
 import com.example.counter.service.ExpansesService;
@@ -50,7 +50,7 @@ public class ExpansesController {
                                            Authentication auth) {
         List<ExpanseDto> searchResult = expansesService.findByParameters(auth.getPrincipal().toString(),
                 categoryId, subCategoryId,
-                Util.formatDateToLocalDate(startDate), Util.formatDateToLocalDate(endDate),
+                DateUtil.formatDateToLocalDate(startDate), DateUtil.formatDateToLocalDate(endDate),
                 moreThan, lessThan);
         return searchResult.isEmpty()
                 ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("No expanses for the range")
@@ -68,7 +68,7 @@ public class ExpansesController {
         Map<String, BigDecimal> result = new HashMap<>();
         expansesService.findByParametersResponse(auth.getPrincipal().toString(),
                         categoryId, subCategoryId,
-                        Util.formatDateToLocalDate(startDate), Util.formatDateToLocalDate(endDate),
+                        DateUtil.formatDateToLocalDate(startDate), DateUtil.formatDateToLocalDate(endDate),
                         moreThan, lessThan)
 
                 .forEach(expanse -> {
